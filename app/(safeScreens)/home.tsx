@@ -13,7 +13,7 @@ export default function HomeScreen(){
     <View className="flex-1 bg-[#D7E1EA]">
       {/* Header: foto + saudação — posicionado levemente abaixo do topo, com espaçamento e boa hierarquia visual */}
       <View
-        className="w-full items-end pt-12 pr-6"
+        className="w-full items-end pt-12 pr-7 mt-6"
         >
         <TouchableOpacity
           className="p-2"
@@ -115,6 +115,7 @@ export default function HomeScreen(){
         "
         accessibilityLabel="Nova receita - Cadastre novos lembretes de receita"
         accessibilityRole="button"
+        onPress={() => router.push('/(safeScreens)/prescriptions/newPrescription')}
       >
         <Image
           source={require("../../assets/images/Nova Receita.png")}

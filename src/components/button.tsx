@@ -1,17 +1,18 @@
-import { Text, TouchableOpacity } from "react-native";
+import { TouchableOpacity } from "react-native";
 
 interface ButtonComponentProps {
   className?: string;
   onPress?: () => void;
+  children?: React.ReactNode;
 }
 
-export default function ButtonComponent({ className, onPress }: ButtonComponentProps){
+export default function ButtonComponent({ className, onPress, children }: ButtonComponentProps){
   return (
     <TouchableOpacity
     onPress={onPress}
     className={`bg-[#C02636] rounded-full p-4 ${className}`}
     >
-      <Text className="text-white font-bold line-height-16px">Entrar</Text>
+      {children}
     </TouchableOpacity>
   );
 }

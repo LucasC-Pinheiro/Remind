@@ -28,7 +28,7 @@ export default function SignUp(){
       contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', padding: 0 }}
       extraScrollHeight={20} // ajusta a distância do teclado
       enableOnAndroid={true}
-    >
+    > 
     <View className="
     flex-1 
     items-center 
@@ -101,9 +101,13 @@ export default function SignUp(){
           </View>
             {/* Botão Entrar */}
             <ButtonComponent 
-              className="mt-8 items-center justify-center"
+              className="mt-8 h-[24%] items-center justify-center"
               onPress={() => router.push('/(safeScreens)/home')}
-            />
+            >
+              <Text
+                className="font-bold text-[#F8FAFB] text-lg"
+              >Entrar</Text>
+            </ButtonComponent>
         </View>
       </View>
     </View>
