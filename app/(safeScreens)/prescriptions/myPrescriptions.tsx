@@ -1,8 +1,11 @@
+import { useReceitasStore } from "@/src/store/receitasStore";
 import { router } from "expo-router";
-import { ArrowLeft, Plus } from "lucide-react-native";
-import { Text, TouchableOpacity, View } from "react-native";
+import { ArrowLeft, Clock, Plus, Repeat, Trash2 } from "lucide-react-native";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 export default function MyPrescriptions(){
+  const receitas = useReceitasStore((state) => state.receitas);
+
   return( 
     <>
     {/* Header: mantemos espaçamento superior para não ficar por detrás do status bar/notch */}
@@ -57,9 +60,51 @@ export default function MyPrescriptions(){
         rounded-t-[30px] 
         p-5 
         bottom-0 
-        items-center"   
+        items-center
+        justify-start"   
     >
+      {/* Aqui ficará a lista de prescrições médicas cadastradas */}
+      {receitas.length === 0 ? (
+        <Text
+        className="
+        font-bold 
+        text-lg 
 
+        text-[#8A98A7]"
+        >Nenhuma receita cadastrada ainda</Text>
+      ) : (
+        <ScrollView
+          className="w-full rounded-2xl px-1"
+          contentContainerStyle={{ paddingBottom: 20 }}
+          showsVerticalScrollIndicator={false}
+        >
+          {receitas.map((receita, index) => (
+            <View 
+              key={index}
+              className="w-full bg-[#D7E1EA] rounded-lg p-4 mb-4 shadow-sm"
+            >
+              <TouchableOpacity
+                className="absolute top-2 right-2"
+                onPress={() => useReceitasStore.getState().removerReceita(index)}
+              >
+                <Trash2 size={20} color="#C02636" />
+              </TouchableOpacity>
+              <Text className="text-lg font-bold text-[#293C4C]">{receita.remedio}</Text>
+              <View className="mt-3 gap-3 flex-row items-center space-x-3">
+                <View className="flex-row items-center bg-[#A2B9CD] rounded-full px-3 py-2 shadow-sm">
+                  <Clock size={16} color="#4D708F" />
+                  <Text className="text-sm text-[#17222B] ml-2">{receita.horario}</Text>
+                </View>
+
+                <View className="flex-row items-center bg-[#A2B9CD] rounded-full px-3 py-2 shadow-sm">
+                  <Repeat size={16} color="#4D708F" />
+                  <Text className="text-sm text-[#17222B] ml-2">Recorrência: {receita.recorrencia}</Text>
+                </View>
+              </View>
+            </View>
+          ))}
+        </ScrollView>
+      )}
     </View>
     </>
   );

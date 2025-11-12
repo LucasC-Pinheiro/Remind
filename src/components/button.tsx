@@ -16,3 +16,11 @@ export default function ButtonComponent({ className, onPress, children }: Button
     </TouchableOpacity>
   );
 }
+
+/*
+  TODOs / OBSERVAÇÕES para manutenção:
+  - Expor props `disabled` e `loading` para lidar com estados assíncronos e reduzir lógica duplicada na aplicação.
+  - Adicionar `accessibilityRole="button"` e `accessibilityState` para `disabled` para melhorar a acessibilidade.
+  - Adicionar testes unitários / snapshot para os diferentes estados (default, disabled, loading).
+  - Considerar o uso de tokens de tema tipados em vez de cores hard-coded para melhor manutenção.
+*/

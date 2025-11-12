@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextInput, View } from 'react-native';
+import { KeyboardTypeOptions, TextInput, View } from 'react-native';
 
 interface InputComponentProps {
   placeholder?: string;
@@ -10,9 +10,12 @@ interface InputComponentProps {
   children?: React.ReactNode;
   onChange?: () => void;
   className?: string;
+  inputClassName?: string;
+  keyboardType?: KeyboardTypeOptions;
+  maxLength?: number;
 };
 
-export default function InputComponent({ placeholder, placeholderTextColor, value, onChangeText, secureTextEntry, children,className }: InputComponentProps) {
+export default function InputComponent({ placeholder, placeholderTextColor, value, onChangeText, secureTextEntry, children,className, keyboardType, maxLength }: InputComponentProps) {
   return (
     <View className={`w-full relative ${className}`}>
       <TextInput
@@ -31,8 +34,19 @@ export default function InputComponent({ placeholder, placeholderTextColor, valu
         value={value}
         onChangeText={onChangeText}
         secureTextEntry={secureTextEntry}
+        keyboardType={keyboardType}
+        maxLength={maxLength}
       />
       {children}
     </View>
   );
 }
+
+/*
+  TODOs / OBSERVAÇÕES para manutenção:
+  - Considere adicionar `keyboardType?: KeyboardTypeOptions` às props para controlar teclados numéricos.
+  - Adicionar props de acessibilidade (accessibilityLabel, testID) para melhorar testabilidade e a11y.
+  - Avaliar envolver com React.memo caso os props sejam estáveis, para otimização de render.
+  - Adicionar testes unitários que verifiquem o comportamento de onChangeText e renderização do placeholder.
+  - Se o design exigir ícones dentro do input, expor uma prop `rightIcon` em vez de usar children para API mais clara.
+*/
