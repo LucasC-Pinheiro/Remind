@@ -1,12 +1,12 @@
 import ButtonComponent from "@/src/components/button";
 import InputComponent from "@/src/components/input";
 
+import { scheduleReminder } from "@/src/services/notifications";
 import { useReceitasStore } from "@/src/store/receitasStore";
 import { router } from "expo-router";
 import { ArrowLeft, Check, Plus } from "lucide-react-native";
 import React, { useState } from "react";
-import { Text, TouchableOpacity, View, Platform } from "react-native";
-import * as Notifications from "expo-notifications";
+import { Text, TouchableOpacity, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 import { AnimatedToast } from "@/src/components/animatedToast";
@@ -28,7 +28,7 @@ export default function NewPrescription() {
   const [toastVisible, setToastVisible] = useState(false);
   const [toastType, setToastType] = useState<"success" | "error">("success");
 
-  const handleAddPrescription = () => {
+  const handleAddPrescription = async () => {
     // reset de erros
     setRemedioError("");
     setHorarioError("");
@@ -68,64 +68,24 @@ export default function NewPrescription() {
       return;
     }
 
-    // adiciona a receita no store
+    // agenda notificação e captura id (pode ser null se permissão negada)
+    let notificationId: string | null = null;
+    try {
+      notificationId = await scheduleReminder({ remedio, horario, recorrencia, tomarAgora });
+    } catch (err) {
+      console.warn("Falha ao agendar notificação:", err);
+    }
+
+    // adiciona a receita no store (inclui notificationId opcional)
     const novaReceita = {
       remedio,
       horario,
       recorrencia,
       tomarAgora,
+      notificationId,
     };
 
     adicionarReceita(novaReceita);
-
-    // pede permissão e agenda notificação local
-    (async () => {
-      try {
-        const { status } = await Notifications.requestPermissionsAsync();
-        if (status !== "granted") {
-          console.warn("Permissão de notificações não concedida");
-          return;
-        }
-
-        // extrai hora e minuto
-        const horarioDigits = horario.replace(/\D/g, "");
-        const hh = Number(horarioDigits.slice(0, 2));
-        const mm = Number(horarioDigits.slice(2));
-
-        // conteúdo da notificação
-        const content = {
-          title: "Hora do remédio",
-          body: `Está na hora de tomar: ${remedio}`,
-          data: { remedio, recorrencia },
-        } as any;
-
-        // se o usuário quer "tomar agora", schedule imediato
-        if (tomarAgora) {
-          await Notifications.scheduleNotificationAsync({ content, trigger: (new Date(Date.now() + 1000) as any) });
-        } else if (recorrencia === "Diário") {
-          // agendamento diário recorrente (usando hora/minuto)
-          await Notifications.scheduleNotificationAsync({
-            content,
-            trigger: { hour: hh, minute: mm, repeats: true } as any,
-          });
-        } else {
-          // agendamento único: calcula próxima ocorrência
-          const now = new Date();
-          const target = new Date(now);
-          target.setHours(hh, mm, 0, 0);
-
-          if (target <= now) {
-            if (recorrencia === "Semanal") target.setDate(target.getDate() + 7);
-            else if (recorrencia === "Mensal") target.setMonth(target.getMonth() + 1);
-            else target.setDate(target.getDate() + 1);
-          }
-
-          await Notifications.scheduleNotificationAsync({ content, trigger: (target as any) });
-        }
-      } catch (err) {
-        console.warn("Erro ao agendar notificação:", err);
-      }
-    })();
 
     // mostra toast de sucesso
     setToastType("success");

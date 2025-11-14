@@ -86,6 +86,7 @@ export default function MyPrescriptions(){
               <TouchableOpacity
                 className="absolute top-2 right-2"
                 onPress={() => useReceitasStore.getState().removerReceita(index)}
+                hitSlop={{ top: 10, left: 10, bottom: 10, right: 10 }}
               >
                 <Trash2 size={20} color="#C02636" />
               </TouchableOpacity>

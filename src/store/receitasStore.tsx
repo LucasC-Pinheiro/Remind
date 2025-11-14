@@ -7,7 +7,9 @@ interface Receita {
   horario: string;
   recorrencia: string;
   tomarAgora: boolean;
-};
+  // id da notificação agendada (se houver) para permitir cancelamento/edição
+  notificationId?: string | null;
+}
 
 interface ReceitasState {
   receitas: Receita[];
